@@ -1,18 +1,18 @@
 
-# data "azurerm_key_vault" "example" {
-#   name                = "mysql-secrets"
-#   resource_group_name = "example-resources"
-# }
+data "azurerm_key_vault" "example" {
+  name                = "mysql-secrets"
+  resource_group_name = "example-resources"
+}
 
-# data "azurerm_key_vault_secret" "example" {
-#   name         = "mysql-secret"
-#   key_vault_id = data.azurerm_key_vault.example.id
-# }
+data "azurerm_key_vault_secret" "example" {
+  name         = "my-secret-pass"
+  key_vault_id = data.azurerm_key_vault.example.id
+}
 
-# output "secret_value" {
-#   value     = data.azurerm_key_vault_secret.example.value
-#   sensitive = true
-# }
+output "secret_value" {
+  value     = data.azurerm_key_vault_secret.example.value
+  sensitive = true
+}
 
 
 resource "azurerm_resource_group" "example" {
@@ -61,7 +61,7 @@ resource "azurerm_mysql_flexible_server" "example" {
   resource_group_name    = azurerm_resource_group.example.name
   location               = azurerm_resource_group.example.location
   administrator_login    = var.admin_name
-  administrator_password = var.admin_pass
+  administrator_password = data.azurerm_key_vault_secret.example.value
   backup_retention_days  = 7
   delegated_subnet_id    = azurerm_subnet.example.id
   private_dns_zone_id    = azurerm_private_dns_zone.example.id
